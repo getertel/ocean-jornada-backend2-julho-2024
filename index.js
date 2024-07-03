@@ -14,13 +14,15 @@ app.get('/oi', function (req, res) {
  //read all - [get] / item
  app.get('/item', function (req, res) {res.send(lista)
 })
-//sinalizar para o express 
+//sinalizamos para o express que vamos usar Json no body 
 
 app.use(express.json())
 
 //creat - post
 app.post('/item', function (req, res) {
   console.log(req.body)
+  const item = req.body.nome
+  lista.push(item)
   res.send('Create')
   })
 app.listen(3000)
