@@ -30,6 +30,34 @@ app.post('/item', function (req, res) {
   console.log(req.body)
   const item = req.body.nome
   lista.push(item)
-  res.send('Create')
-  })
+  res.send('Item criado com sucesso!')
+})
+
+// Read By Id - [GET] /item/:id
+app.get('/item/:id', function (req, res) {
+  // Acessamos o parâmetro de rota ID
+  const id = req.params.id
+
+  // Acessamos o item na lista pelo índice corrigido (id - 1)
+  const item = lista[id - 1]
+
+  // Enviamos o item obtido como resposta
+  res.send(item)
+})
+ 
+// Update - [PUT] /item/:id
+app.put('/item/:id', function (req, res) {
+  // Acessamos o ID do parâmetro de rota
+  const id = req.params.id
+
+  // Acessamos o novoItem no body da requisição
+  const novoItem = req.body.nome
+
+  // Atualizamos a lista com a nova informação
+  lista[id - 1] = novoItem
+
+  // Enviamos uma mensagem de sucesso
+  res.send(id)
+})
+
 app.listen(3000)
