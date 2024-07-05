@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 const app = express()
 
 const dbUrl = 'mongodb+srv://admin:7sZzutY65Mg3zkQq@cluster0.ns4sxry.mongodb.net'
@@ -52,30 +52,45 @@ async function main() {
   })
 
   // Read By Id - [GET] /item/:id
-  app.get('/item/:id', function (req, res) {
+  app.get('/item/:id', async function (req, res) {
     // Acessamos o parâmetro de rota ID
     const id = req.params.id
 
-    // Acessamos o item na lista pelo índice corrigido (id - 1)
-    const item = lista[id - 1]
+    // Acessamos o item na collection pelo ObjectId
+    const item = await collection.findOne({ _id: new ObjectId(id) })
 
     // Enviamos o item obtido como resposta
     res.send(item)
   })
 
   // Update - [PUT] /item/:id
-  app.put('/item/:id', function (req, res) {
+  app.put('/item/:id', async function (req, res) {
     // Acessamos o ID do parâmetro de rota
     const id = req.params.id
 
     // Acessamos o novoItem no body da requisição
-    const novoItem = req.body.nome
+    const novoItem = req.body
 
-    // Atualizamos a lista com a nova informação
-    lista[id - 1] = novoItem
+    // Atualizamos a collection com a nova informação
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: novoItem }
+    )
 
     // Enviamos uma mensagem de sucesso
     res.send('Item atualizado com sucesso: ' + id)
+  })
+
+  // Delete [DELETE] /item/:id
+  app.delete('/item/:id', async function (req, res) {
+    // Acessamos o ID do parâmetro de rota
+    const id = req.params.id
+
+    // Remove o item da collection pelo ObjectId
+    await collection.deleteOne({ _id: new ObjectId(id) })
+
+    // Enviamos uma mensagem de sucesso
+    res.send('Item removido com sucesso!')
   })
 
   app.listen(3000)
